@@ -35,9 +35,9 @@ class TestTag: # 将所有用例放在类里面
        #     for tag in group["tag"] if tag["name"] == tag_name
        # ]
 
-        print(jsonpath(r.json(),f"$..[?(@.name=='{tag_name}')]"))
+        # print(jsonpath(r.json(),f"$..[?(@.name=='{tag_name}')]"))
         assert jsonpath(r.json(),f"$..[?(@.name=='{tag_name}')]") [0] ['name'] == tag_name
         # assert tags != []
     def test_tag_list_fail(self):   # 断言错误的用例
         pass
-
+        # 这个是存放异常代码的函数
