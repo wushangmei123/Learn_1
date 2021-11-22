@@ -5,6 +5,9 @@ from jsonpath import jsonpath
 import requests
 from server.tag import Tag
 
+  # 统一管理标签接口
+
+
 # todo：与底层具体的实现框架代码耦合严重，无法适应变化，比如公司切换了协议，比如使用pb dubbo
 # todo：代码冗余，需要封装
 # todo：无法清晰的描述业务
@@ -41,3 +44,16 @@ class TestTag: # 将所有用例放在类里面
     def test_tag_list_fail(self):   # 断言错误的用例
         pass
         # 这个是存放异常代码的函数
+    def test_tag_list(self):
+        # "group_id": "etO63HBwAANNpRaRpYT2CrwaIrXsJ7RA"
+        # "id": "etO63HBwAAsxXlOK6xDkNRr48Hi6o_pw"
+        self.tag.list()
+
+
+    def test_tag_add(self):
+        group_name="TMP00123" #这里多打了个逗号导致报错 以后再不细心我要打你了
+        tag=[{"name": "TAG_1"},{"name": "TAG_2"},{"name": "TAG_3"},]
+        self.tag.add(group_name=group_name, tag=tag)
+
+    def test_tag_delete(self):
+        self.tag.delete()

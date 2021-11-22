@@ -19,9 +19,14 @@ class Tag:
         token = r.json()['access_token']
         return token
 
-
-    def add(self):
-        pass
+    def add(self,group_name,tag):
+        print(group_name,tag)
+        r = requests.post("https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_corp_tag",
+            params={"access_token": self.token},
+            json={"group_name": group_name,"tag": tag}
+        )
+        print(json.dumps(r.json(),indent=2))  # indent=2 缩进字符
+        return r
 
     def list(self):
         r = requests.post(
@@ -33,6 +38,7 @@ class Tag:
             "tag_id": [],
             "group_id": []
         })
+        print(json.dumps(r.json(),indent=2))
         return r
 
     def update(self,tag_id,tag_name):
@@ -46,7 +52,18 @@ class Tag:
                 "name": tag_name
             }
         )
+        print(json.dumps(r.json(), indent=2))
         return r
 
+    # 查询tag_id,然后删除tag_id
     def delete(self):
-        pass
+        r = requests.post(
+            "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_corp_tag",
+            params = {"access_token": self.token},
+            json = {"group_id":["etO63HBwAAfdZkUFU39BNtp346K3SgNA"],
+                    # "tag_id": ["etO63HBwAAG0mdSuYyMG90SYGS55mjdw"]
+                    }
+        )
+        print(json.dumps(r.json(), indent=2))
+        return r
+
