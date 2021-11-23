@@ -19,14 +19,33 @@ class Tag:
         token = r.json()['access_token']
         return token
 
-    def add(self,group_name,tag):
+    def add(self,group_name,tag,**kwargs):
         print(group_name,tag)
         r = requests.post("https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_corp_tag",
             params={"access_token": self.token},
-            json={"group_name": group_name,"tag": tag}
+            json={"group_name": group_name, "tag": tag, **kwargs}
         )
         print(json.dumps(r.json(),indent=2))  # indent=2 缩进字符
         return r
+
+    def before_add(self,group_name,tag,**kwargs):
+        r = self.add(group_name,tag,**kwargs)
+        # 如果删除的元素已经存在
+        if r.status_code == 200 and r.json()["errcode"] == "40071":
+        # 查询元素是否存在，如果不存在，报错
+            for group in self.list().json()["tag_group"]:
+                if group_name not in group:
+                    print("group name not in group")
+                    return False
+
+        # 如果存在，直接删除
+            for group in self.list().json()["tag_group"]:
+                if group_name in group:
+                    print("删除成功")
+                    return r
+
+
+
 
     def list(self):
         r = requests.post(
@@ -56,14 +75,23 @@ class Tag:
         return r
 
     # 查询tag_id,然后删除tag_id
-    def delete(self):
+    def delete_group(self,group_id):
         r = requests.post(
             "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_corp_tag",
             params = {"access_token": self.token},
-            json = {"group_id":["etO63HBwAAfdZkUFU39BNtp346K3SgNA"],
-                    # "tag_id": ["etO63HBwAAG0mdSuYyMG90SYGS55mjdw"]
+            json = {"group_id": group_id
                     }
         )
         print(json.dumps(r.json(), indent=2))
         return r
 
+    def delete_tag(self,tag_id):
+        r = requests.post(
+            "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_corp_tag",
+            params = {"access_token": self.token},
+            json = {
+                    "tag_id": tag_id
+                    }
+        )
+        print(json.dumps(r.json(), indent=2))
+        return r

@@ -44,9 +44,9 @@ class TestTag: # 将所有用例放在类里面
     def test_tag_list_fail(self):   # 断言错误的用例
         pass
         # 这个是存放异常代码的函数
-    def test_tag_list(self):
+
+    def test_tag1_list(self):
         # "group_id": "etO63HBwAANNpRaRpYT2CrwaIrXsJ7RA"
-        # "id": "etO63HBwAAsxXlOK6xDkNRr48Hi6o_pw"
         self.tag.list()
 
 
@@ -55,5 +55,9 @@ class TestTag: # 将所有用例放在类里面
         tag=[{"name": "TAG_1"},{"name": "TAG_2"},{"name": "TAG_3"},]
         self.tag.add(group_name=group_name, tag=tag)
 
-    def test_tag_delete(self):
-        self.tag.delete()
+    def test_tag_delete_group(self):
+        self.tag.delete_group(["etO63HBwAAz7MuTilkreG9wiy8foLkjg"])
+
+    def test_tag_delete_tag(self):
+        self.tag.delete_tag(["etO63HBwAA0kzzjny_fo7A8Kq2i0zSlw"])
+

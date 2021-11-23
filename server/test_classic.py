@@ -32,7 +32,7 @@ def test_tag_list():
             "group_id": []
         })
 
-    print(json.dumps(r.json(),indent = 2))  # 调试数据
+    print(json.dumps(r.json(),indent = 2))  # 调试数据,格式化打印
     # 打印json()信息  设置indent格式，encoding打印编码使用格式
     # "errmsg": "Warning: wrong json format. invalid access_token"
     assert r.status_code == 200
