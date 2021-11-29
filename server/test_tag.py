@@ -49,11 +49,22 @@ class TestTag: # 将所有用例放在类里面
         # "group_id": "etO63HBwAANNpRaRpYT2CrwaIrXsJ7RA"
         self.tag.list()
 
-
-    def test_tag_add(self):
-        group_name="TMP00123" #这里多打了个逗号导致报错 以后再不细心我要打你了
+    def test_add_tag(self):
+        group_name="TMP00123"
         tag=[{"name": "TAG_1"},{"name": "TAG_2"},{"name": "TAG_3"},]
-        self.tag.add(group_name=group_name, tag=tag)
+        r = self.tag.add(group_name=group_name, tag=tag)
+        assert r.status_code == 200
+        assert r.json()["errcode"] == 0
+
+    def test_add_and_detect(self):
+        group_name = "TMP00123"
+        tag = [
+            {"name": "TAG_1"},
+            {"name": "TAG_2"},
+            {"name": "TAG_3"},
+        ]
+        r = self.tag.add_and_detect(group_name, tag)
+        assert r
 
     def test_tag_delete_group(self):
         self.tag.delete_group(["etO63HBwAAz7MuTilkreG9wiy8foLkjg"])

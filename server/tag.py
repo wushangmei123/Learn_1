@@ -1,5 +1,6 @@
 import datetime
 import json
+import subprocess
 
 import requests
 
@@ -19,6 +20,32 @@ class Tag:
         token = r.json()['access_token']
         return token
 
+    def find_group_id_by_name(self, group_name):
+            # 查询元素是否存在，如果不存在，报错
+        for group in self.list().json()["tag_group"]:
+            if group_name in group["group_name"]:
+                # delete_1 = group["group_id"]
+                # print(delete_1)
+                # return delete_1
+                return group["group_id"]    # 方法二
+        print("group name not in group")
+        return ""
+
+    def add_and_detect(self, group_name, tag, **kwargs):
+        r = self.add(group_name, tag, **kwargs)
+        # 如果删除的元素已经存在,删除
+        if r.json()["errcode"] == 40071:
+            group_id = self.find_group_id_by_name(group_name)
+            if not group_id:
+                return False
+            self.delete_group(group_id)
+            self.add(group_name,tag,**kwargs)
+        result = self.find_group_id_by_name(group_name)
+        if not result:
+            print("add not success")
+        return result
+
+
     def add(self,group_name,tag,**kwargs):
         print(group_name,tag)
         r = requests.post("https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_corp_tag",
@@ -28,26 +55,34 @@ class Tag:
         print(json.dumps(r.json(),indent=2))  # indent=2 缩进字符
         return r
 
-    def before_add(self,group_name,tag,**kwargs):
-        r = self.add(group_name,tag,**kwargs)
-        # 如果删除的元素已经存在
-        if r.status_code == 200 and r.json()["errcode"] == "40071":
-        # 查询元素是否存在，如果不存在，报错
-            for group in self.list().json()["tag_group"]:
-                if group_name not in group:
-                    print("group name not in group")
-                    return False
+    # def before_1_add(self,group_name,tag,**kwargs): # 添加之前的验证
+    #     r = self.add(group_name,tag,**kwargs)
+    #     # 如果要添加的元素已经存在
+    #     if r.status_code == 200 and r.json()["errcode"] == "40071":  # r.json指的是响应结果，返回的结果
+    #     # 查询元素是否存在，如果不存在，报错
+    #         for group in self.list().json()["tag_group"]:  # group去遍历self.list（）查询接口响应中tag_group对应的值
+    #             if group_name not in group["goup_name"]:
+    #                 print("group name not in group")
+    #                 return False
+    #     # 如果存在，直接删除
+    #             else:
+    #                 for group_1 in self.list().json()["tag_group"]: # group_1去遍历self.list（）查询接口响应中tag_group对应的值
+    #                     if group_name in group_1["group_name"]:  # 如果group_name在group_1中
+    #                         delete_1 = group_1["group_id"] # 通过group_1中的group_id去获取它对应的值
+    #                         # for tag_1 in  group_1["tag"]:
+    #                         #     if name in tag_1["name"]:
+    #                         #         delete_2=tag_1["id"]
+    #                         self.delete_group(delete_1)
+    #                         # self.delete_group(delete_2)
+    #                         self.add(group_name,tag)
+    #                         return True
+    '''接口测试核心：发送请求 获取响应 对响应结果进行判断 一般会将响应结果用json形式打印出来 方便判断 
+       复杂逻辑的判断：一般是通过Key去找它对应的value；如果value还是一个字典格式，继续通过key去找'''
 
-        # 如果存在，直接删除
-            for group in self.list().json()["tag_group"]:
-                if group_name in group:
-                    print("删除成功")
-                    return r
 
 
 
-
-    def list(self):
+    def list(self):   # 查询
         r = requests.post(
         'https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_corp_tag_list',
         params = {
@@ -95,3 +130,6 @@ class Tag:
         )
         print(json.dumps(r.json(), indent=2))
         return r
+
+
+
