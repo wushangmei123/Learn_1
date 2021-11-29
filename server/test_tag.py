@@ -49,14 +49,14 @@ class TestTag: # 将所有用例放在类里面
         # "group_id": "etO63HBwAANNpRaRpYT2CrwaIrXsJ7RA"
         self.tag.list()
 
-    def test_add_tag(self):
+    def test_add_tag(self): # 添加
         group_name="TMP00123"
-        tag=[{"name": "TAG_1"},{"name": "TAG_2"},{"name": "TAG_3"},]
+        tag=[{"name": "TAG_1"},{"name": "TAG_21"},{"name": "TAG_31"},]
         r = self.tag.add(group_name=group_name, tag=tag)
         assert r.status_code == 200
         assert r.json()["errcode"] == 0
 
-    def test_add_and_detect(self):
+    def test_add_and_detect(self): # 删除后添加
         group_name = "TMP00123"
         tag = [
             {"name": "TAG_1"},
@@ -66,9 +66,23 @@ class TestTag: # 将所有用例放在类里面
         r = self.tag.add_and_detect(group_name, tag)
         assert r
 
-    def test_tag_delete_group(self):
+        # 如果40068，invalid tagid
+        # 0. 添加tag
+        # 1.删除tag 有问题
+        # 2.再进去重试（重试次数：n）；手动实现，借助pytest 狗子（rerun插件）
+        #a.添加一个项目
+        #b.对新添加的项目在删除
+        #c.查询删除是否成功
+
+    def test_tag_delete_group(self): # 删除group_id
         self.tag.delete_group(["etO63HBwAAz7MuTilkreG9wiy8foLkjg"])
 
-    def test_tag_delete_tag(self):
+    def test_tag_delete_tag(self): # 删除tag_id
         self.tag.delete_tag(["etO63HBwAA0kzzjny_fo7A8Kq2i0zSlw"])
+
+    def test_delete_and_detect_group(self): # 删除存在/不存在的内容
+        # delete_and_detect_gorup(["xxxxxxxxx"])里面的xxx是自定义的，需要删除的内容
+        r = self.tag.delete_and_detect_group(["etO63HBwAATDtabEgHG7mhimrWFuSJBA"])
+        assert r.json()["errcode"] == 0
+
 

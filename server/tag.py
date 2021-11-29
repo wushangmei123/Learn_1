@@ -33,11 +33,11 @@ class Tag:
 
     def add_and_detect(self, group_name, tag, **kwargs):
         r = self.add(group_name, tag, **kwargs)
-        # 如果删除的元素已经存在,删除
+        # 如果删除的元素已经存在
         if r.json()["errcode"] == 40071:
             group_id = self.find_group_id_by_name(group_name)
             if not group_id:
-                return False
+                return ""
             self.delete_group(group_id)
             self.add(group_name,tag,**kwargs)
         result = self.find_group_id_by_name(group_name)
@@ -130,6 +130,36 @@ class Tag:
         )
         print(json.dumps(r.json(), indent=2))
         return r
+    def group_id_exist(self, group_id):
+            # 查询元素是否存在，如果不存在，报错
+        for group in self.list().json()["tag_group"]:
+            if group_id in group["group_id"]:
+                # delete_1 = group["group_id"] # 方法一
+                # print(delete_1)
+                # return delete_1
+                return True   # 方法二
+        print("group id not in group")
+        return False
+
+    def delete_and_detect_group(self,group_ids):
+        deleted_group_ids = [] # 先定义一个需要删除的列表
+        r = self.delete_group(group_ids)
+        if r.json()["errcode"] == 40068:
+            # 如果标签不存在，就添加一个标签，将它的group_id 存储进来
+            for group_id in group_ids:
+                if not self.group_id_exist(group_id): # 如果要添加的元素不存在
+                    # 给他添加一个元素，拿到添加元素的响应中的group_id
+                    # group_id = self.add_and_detect("TMP00123",[{"name":"123"}]).json()["tag_group"]["group_id"]
+                    group_id = self.add_and_detect("TMP00123", [{"name": "123"}])
+                    deleted_group_ids.append(group_id)
+                # 如果标签存在，就将它存入标签组
+                else:
+                    deleted_group_ids.append(group_id)
+            r = self.delete_group(deleted_group_ids)
+        return r
+
+
+
 
 
 
