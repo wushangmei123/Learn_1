@@ -4,21 +4,12 @@ import subprocess
 
 import requests
 
+from server.base_api import BaseApi
 
-class Tag:
-    def __init__(self):
-        self.token = self.get_token() # 初始化token；get_token()为啥要加self是因为：调用这个类中的get_token方法
 
-    def get_token(self):
-        corpid = 'ww4590ee5fb4cdc54b'
-        corpsecret = 'D465rLSeMJmOlveJXP21pJ-drF_O36sH6OSy2DskHxo'
-
-        r = requests.get(
-            'https://qyapi.weixin.qq.com/cgi-bin/gettoken',
-            params={'corpid': corpid, 'corpsecret': corpsecret}
-        )
-        token = r.json()['access_token']
-        return token
+class Tag(BaseApi):   # 继承父类BaseApi
+    def __init__(self):     # __init__构造函数
+        super().__init__()     # super是调用父类里面的__init__方法
 
     def find_group_id_by_name(self, group_name):
             # 查询元素是否存在，如果不存在，报错
@@ -146,15 +137,15 @@ class Tag:
         r = self.delete_group(group_ids)
         if r.json()["errcode"] == 40068:
             # 如果标签不存在，就添加一个标签，将它的group_id 存储进来
-            for group_id in group_ids:
-                if not self.group_id_exist(group_id): # 如果要添加的元素不存在
+            for group_id_tmp in group_ids:
+                if not self.group_id_exist(group_id_tmp): # 如果要添加的元素不存在
                     # 给他添加一个元素，拿到添加元素的响应中的group_id
                     # group_id = self.add_and_detect("TMP00123",[{"name":"123"}]).json()["tag_group"]["group_id"]
-                    group_id = self.add_and_detect("TMP00123", [{"name": "123"}])
-                    deleted_group_ids.append(group_id)
+                    group_id_tmp = self.add_and_detect("TMP00123", [{"name": "TAG123"}])
+                    deleted_group_ids.append(group_id_tmp)
                 # 如果标签存在，就将它存入标签组
                 else:
-                    deleted_group_ids.append(group_id)
+                    deleted_group_ids.append(group_id_tmp)
             r = self.delete_group(deleted_group_ids)
         return r
 

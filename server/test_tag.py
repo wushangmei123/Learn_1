@@ -14,8 +14,9 @@ from server.tag import Tag
 # todo：使用jsonpath表达更灵活的递归查找（建议数据小的时候使用，数据大会比较慢）
 
 class TestTag: # 将所有用例放在类里面
-    def setup_class(self):
-        self.tag = Tag()
+    def setup_class(self): # setupxxx表示前置条件，它在每一个用例执行之前必须会执行一次
+        self.tag = Tag()    # 实例化一个对象，调用tag.py文件中的Tag（）类方法，会先执行该类中的构造方法。
+        # 实例化对象的目的，是为了调用类中封装的方法或者变量
 
     @pytest.mark.parametrize("tag_id,tag_name", [
         ["etO63HBwAAgRCKKH54XfbpUZY2t76NIw","tag1_dnn45"],
@@ -85,4 +86,11 @@ class TestTag: # 将所有用例放在类里面
         r = self.tag.delete_and_detect_group(["etO63HBwAATDtabEgHG7mhimrWFuSJBA"])
         assert r.json()["errcode"] == 0
 
+
+    # def setup_function():   # 测试类里面  "setup_function():每个方法之前执行"
+    #
+    #
+    # def teardown_function():   # 测试类里面  "teardown_function():每个方法之后执行"
+    #
+    #
 
