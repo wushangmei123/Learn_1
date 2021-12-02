@@ -29,7 +29,7 @@ class Tag(BaseApi):   # 继承父类BaseApi
             group_id = self.find_group_id_by_name(group_name)
             if not group_id:
                 return ""
-            self.delete_group(group_id)
+            self.delete_group([group_id])
             self.add(group_name,tag,**kwargs)
         result = self.find_group_id_by_name(group_name)
         if not result:
@@ -38,13 +38,22 @@ class Tag(BaseApi):   # 继承父类BaseApi
 
 
     def add(self,group_name,tag,**kwargs):
-        print(group_name,tag)
-        r = requests.post("https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_corp_tag",
-            params={"access_token": self.token},
-            json={"group_name": group_name, "tag": tag, **kwargs}
-        )
-        print(json.dumps(r.json(),indent=2))  # indent=2 缩进字符
+        data = {
+            "method": "post",
+            "url": "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_corp_tag",
+            "params":{"access_token": self.token},
+            "json": {"group_name": group_name, "tag": tag, **kwargs}
+        }
+        r = self.send(data)
         return r
+
+        # print(group_name,tag)
+        # r = requests.post("https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_corp_tag",
+        #     params={"access_token": self.token},
+        #     json={"group_name": group_name, "tag": tag, **kwargs}
+        # )
+        # print(json.dumps(r.json(),indent=2))  # indent=2 缩进字符
+
 
     # def before_1_add(self,group_name,tag,**kwargs): # 添加之前的验证
     #     r = self.add(group_name,tag,**kwargs)
@@ -74,53 +83,90 @@ class Tag(BaseApi):   # 继承父类BaseApi
 
 
     def list(self):   # 查询
-        r = requests.post(
-        'https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_corp_tag_list',
-        params = {
-            "access_token": self.token  # 已封装的部分都需要替换，所以这里调用写成self.token，而不是写成token
-        }, # params传参
-        json = {
-            "tag_id": [],
-            "group_id": []
-        })
-        print(json.dumps(r.json(),indent=2))
+        data = {
+            "method": "post",
+            "url": "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_corp_tag_list",
+            "params": {"access_token": self.token},
+            "json":  {"tag_id": [],"group_id": []}
+        }
+        r = self.send(data)
         return r
 
+        # r = requests.post(
+        # 'https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_corp_tag_list',
+        # params = {
+        #     "access_token": self.token  # 已封装的部分都需要替换，所以这里调用写成self.token，而不是写成token
+        # }, # params传参
+        # json = {
+        #     "tag_id": [],
+        #     "group_id": []}
+        # )
+        # print(json.dumps(r.json(),indent=2))
+
+
     def update(self,tag_id,tag_name):
-        r = requests.post(
-            'https://qyapi.weixin.qq.com/cgi-bin/externalcontact/edit_corp_tag',
-            params={
-                "access_token": self.token
-            },
-            json={
-                "id": tag_id,
-                "name": tag_name
-            }
-        )
-        print(json.dumps(r.json(), indent=2))
+        data = {
+            "method": "post",
+            "url": "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/edit_corp_tag",
+            "params": {"access_token": self.token},
+            "json": {"id": tag_id,"name": tag_name}
+        }
+        r = self.send(data)
         return r
+
+        # r = requests.post(
+        #     'https://qyapi.weixin.qq.com/cgi-bin/externalcontact/edit_corp_tag',
+        #     params={
+        #         "access_token": self.token
+        #     },
+        #     json={
+        #         "id": tag_id,
+        #         "name": tag_name
+        #     }
+        # )
+        # print(json.dumps(r.json(), indent=2))
+        # return r
 
     # 查询tag_id,然后删除tag_id
     def delete_group(self,group_id):
-        r = requests.post(
-            "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_corp_tag",
-            params = {"access_token": self.token},
-            json = {"group_id": group_id
-                    }
-        )
-        print(json.dumps(r.json(), indent=2))
+        data = {
+            "method": "post",
+            "url": "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_corp_tag",
+            "params": {"access_token": self.token},
+            "json": {"group_id": group_id}
+        }
+        r = self.send(data)
         return r
 
+        # r = requests.post(
+        #     "c",
+        #     params = {"access_token": self.token},
+        #     json = {"group_id": group_id
+        #             }
+        # )
+        # print(json.dumps(r.json(), indent=2))
+        # return r
+
     def delete_tag(self,tag_id):
-        r = requests.post(
-            "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_corp_tag",
-            params = {"access_token": self.token},
-            json = {
-                    "tag_id": tag_id
-                    }
-        )
-        print(json.dumps(r.json(), indent=2))
+        data = {
+            "method": "post",
+            "url": "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_corp_tag",
+            "params": {"access_token": self.token},
+            "json": {"tag_id": tag_id}
+        }
+        r = self.send(data)
         return r
+
+        # r = requests.post(
+        #     "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_corp_tag",
+        #     params = {"access_token": self.token},
+        #     json = {
+        #             "tag_id": tag_id
+        #             }
+        # )
+        # print(json.dumps(r.json(), indent=2))
+        # return r
+
     def group_id_exist(self, group_id):
             # 查询元素是否存在，如果不存在，报错
         for group in self.list().json()["tag_group"]:

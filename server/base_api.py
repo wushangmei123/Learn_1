@@ -10,11 +10,11 @@ class BaseApi:
     def get_token(self):
         corpid = 'ww4590ee5fb4cdc54b'
         corpsecret = 'D465rLSeMJmOlveJXP21pJ-drF_O36sH6OSy2DskHxo'
-        date ={"method": "get",
+        data ={"method": "get",
                "url": "https://qyapi.weixin.qq.com/cgi-bin/gettoken",
                "params": {'corpid': corpid, 'corpsecret': corpsecret}
                }
-        r = self.send(date)
+        r = self.send(data)
         # r = requests.get(
         #     'https://qyapi.weixin.qq.com/cgi-bin/gettoken',
         #     params={'corpid': corpid, 'corpsecret': corpsecret}
