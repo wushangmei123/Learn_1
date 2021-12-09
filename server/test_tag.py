@@ -19,18 +19,18 @@ class TestTag: # 将所有用例放在类里面
         # 实例化对象的目的，是为了调用类中封装的方法或者变量
 
     @pytest.mark.parametrize("tag_id,tag_name", [
-        ["etO63HBwAAgRCKKH54XfbpUZY2t76NIw","tag1_dnn45"],
-        ["etO63HBwAAgRCKKH54XfbpUZY2t76NIw","tag1_中文"],
-        ["etO63HBwAAgRCKKH54XfbpUZY2t76NIw","tag1[中文]"]
+        ["etO63HBwAABlE8g1csWRG9YV76Rn9cjw","TAG_1"],
+        ["etO63HBwAAjDysKqBt-DbU1trDXcIHvw","TAG_2"],
+        ["etO63HBwAAqHYIcno_75uTTSzitgK4ng","TAG_3"]
     ]) # 装饰器里面，key= value如：tag_id = etO63HBwAAgRCKKH54XfbpUZY2t76NIw # pytest参数化的方法
     def test_tag_list(self,tag_id,tag_name):
         # group_name = "python14" 这个没有用到，可以删掉
         tag_name = tag_name + str(datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
         # tag = Tag() # 原来这里写的是token，现在token已经被封装到tag.py里面，现在需要用token，所以需要从tag.py里面去调用
 
-        r = self.tag.list() # 原来这里写的是list，现在需要用list，所以需要从tag.py里面去调用
+        # self.tag.list() # 原来这里写的是list，现在需要用list，所以需要从tag.py里面去调用
         # list会返回r的结果；r是tag.py文件里面return出来的r给到这里面的r
-        r = self.tag.update(tag_id= tag_id,tag_name= tag_name) # 原理这里是写的修改的
+        self.tag.update(tag_id= tag_id,tag_name= tag_name) # 原理这里是写的修改的
         r = self.tag.list()
 
        #  tags = [
@@ -40,18 +40,18 @@ class TestTag: # 将所有用例放在类里面
        # ]
 
         # print(jsonpath(r.json(),f"$..[?(@.name=='{tag_name}')]"))
-        assert jsonpath(r.json(),f"$..[?(@.name=='{tag_name}')]") [0] ['name'] == tag_name
+        # assert jsonpath(r.json(),f"$..[?(@.name=='{tag_name}')]") [0] ['name'] == tag_name
         # assert tags != []
     def test_tag_list_fail(self):   # 断言错误的用例
         pass
         # 这个是存放异常代码的函数
 
-    def test_tag1_list(self):
+    def test_tag1_list(self): # 查询
         # "group_id": "etO63HBwAANNpRaRpYT2CrwaIrXsJ7RA"
         self.tag.list()
 
     def test_add_tag(self): # 添加
-        group_name="TMP00123"
+        group_name="TMP00014"
         tag=[{"name": "TAG_1"},{"name": "TAG_21"},{"name": "TAG_31"},]
         r = self.tag.add(group_name=group_name, tag=tag)
         assert r.status_code == 200
@@ -76,10 +76,10 @@ class TestTag: # 将所有用例放在类里面
         #c.查询删除是否成功
 
     def test_tag_delete_group(self): # 删除group_id
-        self.tag.delete_group(["etO63HBwAAz7MuTilkreG9wiy8foLkjg"])
+        self.tag.delete_group(["etO63HBwAAof-tm2h0msi5b5V36lnIsw"])
 
     def test_tag_delete_tag(self): # 删除tag_id
-        self.tag.delete_tag(["etO63HBwAA0kzzjny_fo7A8Kq2i0zSlw"])
+        self.tag.delete_tag(["etO63HBwAAof-tm2h0msi5b5V36lnIsw"])
 
     def test_delete_and_detect_group(self): # 删除存在/不存在的内容
         # delete_and_detect_gorup(["xxxxxxxxx"])里面的xxx是自定义的，需要删除的内容

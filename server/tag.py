@@ -3,13 +3,16 @@ import json
 import subprocess
 
 import requests
-
+import yaml
 from server.base_api import BaseApi
 
 
 class Tag(BaseApi):   # 继承父类BaseApi
     def __init__(self):     # __init__构造函数
         super().__init__()     # super是调用父类里面的__init__方法
+        self.params["TOKEN"] = self.token
+        with open("../server/tag.yaml", encoding="utf-8") as f:
+            self.data = yaml.safe_load(f)
 
     def find_group_id_by_name(self, group_name):
             # 查询元素是否存在，如果不存在，报错
@@ -37,14 +40,18 @@ class Tag(BaseApi):   # 继承父类BaseApi
         return result
 
 
-    def add(self,group_name,tag,**kwargs):
-        data = {
-            "method": "post",
-            "url": "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_corp_tag",
-            "params":{"access_token": self.token},
-            "json": {"group_name": group_name, "tag": tag, **kwargs}
-        }
-        r = self.send(data)
+    def add(self, group_name, tag, **kwargs):
+        # data = {
+        #     "method": "post",
+        #     "url": "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/add_corp_tag",
+        #     "params":{"access_token": self.token},
+        #     "json": {"group_name": group_name, "tag": tag, **kwargs}
+        # }
+        self.params["group_name"] = group_name
+        self.params["tag"] = tag
+        # with open("../server/tag.yaml", encoding="utf-8") as f:  # with open 打开文件
+        #     data = yaml.safe_load(f)  # load 读取文件
+        r = self.send(kwargs=self.data["add"])   # kwargs= data关键字接收位置参数
         return r
 
         # print(group_name,tag)
@@ -83,13 +90,17 @@ class Tag(BaseApi):   # 继承父类BaseApi
 
 
     def list(self):   # 查询
-        data = {
-            "method": "post",
-            "url": "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_corp_tag_list",
-            "params": {"access_token": self.token},
-            "json":  {"tag_id": [],"group_id": []}
-        }
-        r = self.send(data)
+        # data = {
+        #     "method": "post",
+        #     "url": "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/get_corp_tag_list",
+        #     "params": {"access_token": self.token},
+        #     "json":  {"tag_id": [],"group_id": [1]}
+        # }
+        self.params["tag_id"] = []
+        self.params["group"] = []
+        # with open("../server/tag.yaml", encoding="utf-8") as f:
+        #     data = yaml.safe_load(f)
+        r = self.send(self.data["list"])
         return r
 
         # r = requests.post(
@@ -105,13 +116,15 @@ class Tag(BaseApi):   # 继承父类BaseApi
 
 
     def update(self,tag_id,tag_name):
-        data = {
-            "method": "post",
-            "url": "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/edit_corp_tag",
-            "params": {"access_token": self.token},
-            "json": {"id": tag_id,"name": tag_name}
-        }
-        r = self.send(data)
+        # data = {
+        #     "method": "post",
+        #     "url": "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/edit_corp_tag",
+        #     "params": {"access_token": self.token},
+        #     "json": {"id": tag_id,"name": tag_name}
+        # }
+        self.params["id"] = tag_id
+        self.params["name"] = tag_name
+        r = self.send(self.data["update"])
         return r
 
         # r = requests.post(
@@ -129,13 +142,14 @@ class Tag(BaseApi):   # 继承父类BaseApi
 
     # 查询tag_id,然后删除tag_id
     def delete_group(self,group_id):
-        data = {
-            "method": "post",
-            "url": "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_corp_tag",
-            "params": {"access_token": self.token},
-            "json": {"group_id": group_id}
-        }
-        r = self.send(data)
+        # data = {
+        #     "method": "post",
+        #     "url": "https://qyapi.weixin.qq.com/cgi-bin/externalcontact/del_corp_tag",
+        #     "params": {"access_token": self.token},
+        #     "json": {"group_id": group_id}
+        # }
+        self.params["group_id"] = group_id
+        r = self.send(self.data["delete_group"])
         return r
 
         # r = requests.post(
